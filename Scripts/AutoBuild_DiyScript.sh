@@ -67,8 +67,8 @@ EOF
 
 		rm -r ${FEEDS_LUCI}/luci-theme-argon*
 		AddPackage git themes luci-theme-argon jerrykuku 18.06
-    		git clone -b dev https://github.com/vernesong/OpenClash.git luci-app-openclash
-      		mv -f luci-app-openclash package/other
+		git clone --depth=1 -b dev https://github.com/vernesong/OpenClash.git luci-app-openclash
+		mv -f luci-app-openclash package/other
 		AddPackage git lean luci-app-argon-config jerrykuku master
 		AddPackage git other helloworld fw876 main
 		AddPackage git themes luci-theme-neobird thinktip main
