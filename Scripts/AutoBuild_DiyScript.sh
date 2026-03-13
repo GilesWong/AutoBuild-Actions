@@ -164,10 +164,9 @@ EOF
 
 				Copy ${CustomFiles}/speedtest ${BASE_FILES}/usr/bin
 				chmod +x ${BASE_FILES}/usr/bin/speedtest
-				wget -O - https://github.com/nikkinikki-org/OpenWrt-nikki/raw/refs/heads/main/feed.sh | ash
-				opkg install nikki
-				opkg install luci-app-nikki
-				opkg install luci-i18n-nikki-zh-cn
+				
+				AddPackage momo nikkinikki-org OpenWrt-momo main
+				AddPackage natfrp nikkinikki-org luci-app-natfrp master
 			;;
 			esac
 		;;
