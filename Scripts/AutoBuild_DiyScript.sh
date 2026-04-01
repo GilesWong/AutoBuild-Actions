@@ -168,6 +168,16 @@ EOF
 				AddPackage momo nikkinikki-org OpenWrt-momo main
 				AddPackage natfrp nikkinikki-org luci-app-natfrp master
 			;;
+			x86_64_Giles)
+				echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> ${FEEDS_CONF}
+				./scripts/feeds update nikki
+
+				wget --quiet --no-check-certificate -P /tmp \
+					https://github.com/ameshkov/dnslookup/releases/download/v1.11.2/dnslookup-linux-amd64-v1.11.2.tar.gz
+				tar -xzf /tmp/dnslookup-linux-amd64-v1.11.2.tar.gz -C /tmp
+				Copy /tmp/dnslookup-linux-amd64 ${BASE_FILES}/usr/bin dnslookup
+				chmod +x ${BASE_FILES}/usr/bin/dnslookup
+			;;
 			esac
 		;;
 		esac
@@ -212,19 +222,20 @@ EOF
 		Copy ${CustomFiles}/Depends/cpuset ${BASE_FILES}/bin
 		ReleaseDL https://api.github.com/repos/nxtrace/NTrace-core/releases/latest nexttrace_linux_amd64 ${BASE_FILES}/bin nexttrace
 
-		hysteria_version="2.7.0"
-		wstunnel_version="9.2.3"
-		wget --quiet --no-check-certificate -P /tmp \
-			https://github.com/apernet/hysteria/releases/download/app%2Fv${hysteria_version}/hysteria-linux-amd64
-		wget --quiet --no-check-certificate -P /tmp \
-			https://github.com/erebe/wstunnel/releases/download/v${wstunnel_version}/wstunnel_${wstunnel_version}_linux_amd64.tar.gz
-		tar -xvzf /tmp/wstunnel_${wstunnel_version}_linux_amd64.tar.gz -C /tmp
-		Copy /tmp/wstunnel ${BASE_FILES}/usr/bin
-		Copy /tmp/hysteria-linux-amd64 ${BASE_FILES}/usr/bin hysteria
-		chmod +x ${BASE_FILES}/usr/bin/hysteria ${BASE_FILES}/usr/bin/wstunnel
-
-		# ReleaseDL https://api.github.com/repos/Loyalsoldier/v2ray-rules-dat/releases/latest geosite.dat ${BASE_FILES}/usr/v2ray
-		# ReleaseDL https://api.github.com/repos/Loyalsoldier/v2ray-rules-dat/releases/latest geoip.dat ${BASE_FILES}/usr/v2ray
+		case "${CONFIG_FILE}" in
+		x86_64)
+			hysteria_version="2.7.0"
+			wstunnel_version="9.2.3"
+			wget --quiet --no-check-certificate -P /tmp \
+				https://github.com/apernet/hysteria/releases/download/app%2Fv${hysteria_version}/hysteria-linux-amd64
+			wget --quiet --no-check-certificate -P /tmp \
+				https://github.com/erebe/wstunnel/releases/download/v${wstunnel_version}/wstunnel_${wstunnel_version}_linux_amd64.tar.gz
+			tar -xvzf /tmp/wstunnel_${wstunnel_version}_linux_amd64.tar.gz -C /tmp
+			Copy /tmp/wstunnel ${BASE_FILES}/usr/bin
+			Copy /tmp/hysteria-linux-amd64 ${BASE_FILES}/usr/bin hysteria
+			chmod +x ${BASE_FILES}/usr/bin/hysteria ${BASE_FILES}/usr/bin/wstunnel
+		;;
+		esac
 	;;
 	esac
 }
