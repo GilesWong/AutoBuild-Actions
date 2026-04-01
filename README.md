@@ -4,25 +4,60 @@ AutoBuild-Actions 稳定版仓库地址: [AutoBuild-Actions-Template](https://gi
 
 自用修改版软件包地址: [AutoBuild-Packages](https://github.com/Hyy2001X/AutoBuild-Packages)
 
-支持的 OpenWrt 源码: `coolsnowwolf/lede`、`immortalwrt/immortalwrt`、`openwrt/openwrt`、`lienol/openwrt`、`padavanonly/immortalwrtARM`、`hanwckf/immortalwrt-mt798x`
+支持的 OpenWrt 源码: `immortalwrt/immortalwrt`
 
 ## 维护设备列表
 
 | 维护 | 型号 | 配置文件 (TARGET_PROFILE) | 源 | 备注 |
 | :----: | :----: | :----: | :----: | :----: |
-| ✅ | [x86_64](./.github/workflows/AutoBuild-x86_64.yml) | [x86_64](./Configs/x86_64) | [immortalwrt](https://github.com/immortalwrt/immortalwrt) |  |
-| ❎ | [新路由3](./.github/workflows/AutoBuild-d-team_newifi-d2.yml) | [d-team_newifi-d2](./Configs/d-team_newifi-d2) | [lede](https://github.com/coolsnowwolf/lede) |  |
-| ❎ | [华硕 ACRH17](./.github/workflows/AutoBuild-asus_rt-ac42u.yml) | [asus_rt-ac42u](./Configs/asus_rt-ac42u) | [lede](https://github.com/coolsnowwolf/lede) |  |
-| ❎ | [竞斗云 2.0](./.github/workflows/AutoBuild-p2w_r619ac-128m.yml) | [p2w_r619ac-128m](./Configs/p2w_r619ac-128m) | [lede](https://github.com/coolsnowwolf/lede) |  |
-| ❎ | [小娱C5](./.github/workflows/AutoBuild-xiaoyu_xy-c5.yml) | [xiaoyu_xy-c5](./Configs/xiaoyu_xy-c5) | [lede](https://github.com/coolsnowwolf/lede) |  |
-| ❎ | [红米 AC2100](./.github/workflows/AutoBuild-xiaomi_redmi-router-ac2100.yml) | [xiaomi_redmi-router-ac2100](./Configs/xiaomi_redmi-router-ac2100) | [lede](https://github.com/coolsnowwolf/lede) |  |
-| ❎ | [红米 AX6S](./.github/workflows/AutoBuild-xiaomi_redmi-router-ax6s.yml) | [xiaomi_redmi-router-ax6s](./Configs/xiaomi_redmi-router-ax6s) | [lede](https://github.com/coolsnowwolf/lede) |  |
-| ✅ | [中国移动 RAX3000M](./.github/workflows/AutoBuild-cmcc_rax3000m.yml) | [cmcc_rax3000m](./Configs/cmcc_rax3000m) | [immortalwrt-mt798x](https://github.com/hanwckf/immortalwrt-mt798x) |  |
-| ✅ | [捷希 Q30](./.github/workflows/AutoBuild-jcg_q30.yml) | [jcg_q30](./Configs/jcg_q30) | [immortalwrt-mt798x](https://github.com/hanwckf/immortalwrt-mt798x) |  |
+| ✅ | [x86_64](./.github/workflows/AutoBuild-x86_64.yml) | [x86_64](./Configs/x86_64) | [immortalwrt](https://github.com/immortalwrt/immortalwrt) | openwrt-25.12 |
+
+### 额外注入工具
+
+| 工具 | 版本 | 来源 |
+| :----: | :----: | :----: |
+| [nikki](https://github.com/nikkinikki-org/OpenWrt-nikki) | latest | 第三方 feed |
+| [dnslookup](https://github.com/ameshkov/dnslookup) | v1.11.2 | 预编译二进制 |
+| [nexttrace](https://github.com/nxtrace/NTrace-core) | latest | GitHub Releases |
+| cpuset | — | 内置 |
+| [autoupdate](https://github.com/Hyy2001X/AutoBuild-Packages) | latest | AutoBuild-Packages |
+
+### LUCI 应用
+
+| 分类 | 应用 |
+| :----: | :----: |
+| **网络** | luci-app-nikki, luci-app-wireguard, luci-app-natfrp, luci-app-natter, luci-app-natter2, luci-app-mwan3, luci-app-upnp |
+| **DNS** | luci-app-mosdns |
+| **加速** | luci-app-turboacc, luci-app-uugamebooster, luci-app-leigod-acc |
+| **QoS** | luci-app-nft-qos, luci-app-sqm |
+| **DDNS** | luci-app-ddns, luci-app-ddns-go, ddns-scripts-cloudflare |
+| **Docker** | luci-app-docker, luci-app-dockerman |
+| **存储** | luci-app-samba4, luci-app-cifs-mount, luci-app-nfs, luci-app-diskman, luci-app-rclone, luci-app-vsftpd, luci-app-filetransfer, automount |
+| **系统** | luci-app-ttyd, luci-app-accesscontrol, luci-app-autoreboot, luci-app-shutdown, luci-app-ramfree, luci-app-onliner, luci-app-nlbwmon, luci-app-wrtbwmon, luci-app-hd-idle, luci-app-irqbalance, luci-app-vlmcsd, luci-app-wol, luci-app-usb-printer, luci-app-socat, luci-app-iperf3-server, luci-app-iptvhelper, luci-app-npc |
+
+### CLI 工具
+
+| 工具 |
+| :----: |
+| dnslookup |
+| nexttrace |
+| bash |
+| curl |
+| wget-ssl |
+| htop |
+| jq |
+| yq |
+| httping |
+| git |
+| docker |
+| docker-compose |
+| rclone |
+| adb |
+| upx-static |
 
 🔔 **为了你的账号安全, 请不要使用 SSH 连接 Github Actions**, `.config` 配置以及固件定制等操作请务必在本地完成 🔔
 
-🎈 **提示**: 文档中的 **TARGET_PROFILE** 为编译的设备名称(代号), 例如: `d-team_newifi-d2`、`asus_rt-acrh17`、`x86_64`
+🎈 **提示**: 文档中的 **TARGET_PROFILE** 为编译的设备名称(代号), 例如: `x86_64`
    
 **TARGET_PROFILE** 本地获取方法如下:
    
@@ -126,6 +161,8 @@ AutoBuild-Actions 稳定版仓库地址: [AutoBuild-Actions-Template](https://gi
 ## 鸣谢
 
    - [Lean's Openwrt Source code](https://github.com/coolsnowwolf/lede)
+
+   - [AutoBuild-Actions](https://github.com/Hyy2001X/AutoBuild-Actions-BETA)
 
    - [P3TERX's Blog](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
 

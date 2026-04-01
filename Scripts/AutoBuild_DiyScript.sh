@@ -75,100 +75,12 @@ Firmware_Diy() {
 	# merge_package <git_branch> <git_repo_url> <package_path> <target_path>..
 	
 	case "${OP_AUTHOR}/${OP_REPO}:${OP_BRANCH}" in
-	coolsnowwolf/lede:master)
-		cat >> ${Version_File} <<EOF
-sed -i '/check_signature/d' /etc/opkg.conf
-if [ -z "\$(grep "REDIRECT --to-ports 53" /etc/firewall.user 2> /dev/null)" ]
-then
-	echo '# iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo '# iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo 'iptables -t mangle -A PREROUTING -i pppoe -p icmp --icmp-type destination-unreachable -j DROP' >> /etc/firewall.user
-	echo 'iptables -t mangle -A PREROUTING -i pppoe -p tcp -m tcp --tcp-flags ACK,RST RST -j DROP' >> /etc/firewall.user
-	echo 'iptables -t mangle -A PREROUTING -i pppoe -p tcp -m tcp --tcp-flags PSH,FIN PSH,FIN -j DROP' >> /etc/firewall.user
-	echo '[ -n "\$(command -v ip6tables)" ] && ip6tables -t mangle -A PREROUTING -i pppoe -p tcp -m tcp --tcp-flags PSH,FIN PSH,FIN -j DROP' >> /etc/firewall.user
-	echo '[ -n "\$(command -v ip6tables)" ] && ip6tables -t mangle -A PREROUTING -i pppoe -p ipv6-icmp --icmpv6-type destination-unreachable -j DROP' >> /etc/firewall.user
-	echo '[ -n "\$(command -v ip6tables)" ] && ip6tables -t mangle -A PREROUTING -i pppoe -p tcp -m tcp --tcp-flags ACK,RST RST -j DROP' >> /etc/firewall.user
-fi
-exit 0
-EOF
-		# sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
-		# sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
-		# sed -i '/uci commit luci/i\uci set luci.main.mediaurlbase="/luci-static/argon-mod"' $(PKG_Finder d package default-settings)/files/zzz-default-settings
-		#sed -i "s?openwrt-23.05?master?g" ${FEEDS_CONF}
-		git reset --hard 1627fd2c745e496134834a8fb8145ba0aa458ae9
-		
-		rm -r ${FEEDS_LUCI}/luci-theme-argon*
-		AddPackage other vernesong OpenClash dev
-		AddPackage other jerrykuku luci-app-argon-config master
-		AddPackage other sbwml luci-app-mosdns v5-lua
-		AddPackage themes jerrykuku luci-theme-argon 18.06
-		AddPackage themes thinktip luci-theme-neobird main
-		AddPackage msd_lite ximiTech luci-app-msd_lite main
-		AddPackage msd_lite ximiTech msd_lite main
-		AddPackage iptvhelper riverscn openwrt-iptvhelper master
-		rm -r ${FEEDS_PKG}/mosdns
-		rm -r ${FEEDS_LUCI}/luci-app-mosdns
-		rm -r ${FEEDS_PKG}/curl
-		rm -r ${FEEDS_PKG}/msd_lite
-		Copy ${CustomFiles}/curl ${FEEDS_PKG}
-		
-		case "${TARGET_BOARD}" in
-		ramips)
-			sed -i "/DEVICE_COMPAT_VERSION := 1.1/d" target/linux/ramips/image/mt7621.mk
-			Copy ${CustomFiles}/Depends/automount $(PKG_Finder d "package" automount)/files 15-automount
-		;;
-		esac
-
-		case "${CONFIG_FILE}" in
-		d-team_newifi-d2-Clash | xiaoyu_xy-c5-Clash)
-			ClashDL mipsle-hardfloat tun
-		;;
-		esac
-			
-		case "${TARGET_PROFILE}" in
-		d-team_newifi-d2)
-			Copy ${CustomFiles}/${TARGET_PROFILE}_system ${BASE_FILES}/etc/config system
-		;;
-		xiaomi_redmi-router-ax6s)
-			AddPackage passwall-depends Openwrt-Passwall openwrt-passwall-packages main
-			AddPackage passwall-luci Openwrt-Passwall openwrt-passwall main
-		;;
-		esac
-	;;
 	immortalwrt/immortalwrt*)
 		case "${TARGET_PROFILE}" in
 		x86_64)
 			sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
 			case "${CONFIG_FILE}" in
 			x86_64)
-				AddPackage qosmate hudra0 qosmate main
-				AddPackage qosmate hudra0 luci-app-qosmate main
-				
-				AddPackage bandix timsaya luci-app-bandix main
-				AddPackage bandix timsaya openwrt-bandix main
-
-				AddPackage fakehttp yingziwu luci-app-fakehttp main
-				AddPackage fakehttp yingziwu openwrt-fakehttp main
-				
-				AddPackage passwall Openwrt-Passwall openwrt-passwall main
-			    AddPackage passwall Openwrt-Passwall openwrt-passwall-packages main
-				sed -i 's/^local excluded_domain = {.*/local excluded_domain = {}/' package/passwall/openwrt-passwall/luci-app-passwall/root/usr/share/passwall/rule_update.lua
-				
-				rm -rf feeds/packages/lang/golang
-				git clone https://github.com/sbwml/packages_lang_golang -b 25.x feeds/packages/lang/golang
-				
-				rm -r ${FEEDS_LUCI}/luci-app-passwall
-				rm -rf ${FEEDS_PKG}/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
-
-				Copy ${CustomFiles}/speedtest ${BASE_FILES}/usr/bin
-				chmod +x ${BASE_FILES}/usr/bin/speedtest
-				
-				AddPackage momo nikkinikki-org OpenWrt-momo main
-				AddPackage natfrp nikkinikki-org luci-app-natfrp master
-			;;
-			x86_64_Giles)
 				echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> ${FEEDS_CONF}
 				./scripts/feeds update nikki
 
@@ -182,60 +94,11 @@ EOF
 		;;
 		esac
 	;;
-	padavanonly/immortalwrtARM*)
-		case "${TARGET_PROFILE}" in
-		xiaomi_redmi-router-ax6s)
-			:
-		;;
-		esac
-	;;
-	hanwckf/immortalwrt-mt798x*)
-		case "${TARGET_PROFILE}" in
-		cmcc_rax3000m | jcg_q30)
-			AddPackage fakehttp yingziwu luci-app-fakehttp main
-			AddPackage fakehttp yingziwu openwrt-fakehttp main
-				
-			rm -r ${FEEDS_LUCI}/luci-app-passwall
-			rm -rf ${FEEDS_PKG}/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
-
-			AddPackage passwall Openwrt-Passwall openwrt-passwall main
-			AddPackage passwall Openwrt-Passwall openwrt-passwall-packages main
-			sed -i 's/^local excluded_domain = {.*/local excluded_domain = {}/' package/passwall/openwrt-passwall/luci-app-passwall/root/usr/share/passwall/rule_update.lua
-				
-			patch < ${CustomFiles}/mt7981/0001-Add-iptables-socket.patch -p1 -d ${WORK}
-
-			rm -rf ${WORK}/package/network/services/dnsmasq
-			Copy ${CustomFiles}/dnsmasq ${WORK}/package/network/services
-
-			find ${WORK}/package/ | grep Makefile | grep mosdns | xargs rm -f
-			
-			rm -rf feeds/packages/lang/golang
-			git clone https://github.com/sbwml/packages_lang_golang -b 25.x feeds/packages/lang/golang
-				
-			AddPackage other sbwml luci-app-mosdns v5
-		;;
-		esac
-	;;
 	esac
 	case "${TARGET_PROFILE}" in
 	x86_64)
 		Copy ${CustomFiles}/Depends/cpuset ${BASE_FILES}/bin
 		ReleaseDL https://api.github.com/repos/nxtrace/NTrace-core/releases/latest nexttrace_linux_amd64 ${BASE_FILES}/bin nexttrace
-
-		case "${CONFIG_FILE}" in
-		x86_64)
-			hysteria_version="2.7.0"
-			wstunnel_version="9.2.3"
-			wget --quiet --no-check-certificate -P /tmp \
-				https://github.com/apernet/hysteria/releases/download/app%2Fv${hysteria_version}/hysteria-linux-amd64
-			wget --quiet --no-check-certificate -P /tmp \
-				https://github.com/erebe/wstunnel/releases/download/v${wstunnel_version}/wstunnel_${wstunnel_version}_linux_amd64.tar.gz
-			tar -xvzf /tmp/wstunnel_${wstunnel_version}_linux_amd64.tar.gz -C /tmp
-			Copy /tmp/wstunnel ${BASE_FILES}/usr/bin
-			Copy /tmp/hysteria-linux-amd64 ${BASE_FILES}/usr/bin hysteria
-			chmod +x ${BASE_FILES}/usr/bin/hysteria ${BASE_FILES}/usr/bin/wstunnel
-		;;
-		esac
 	;;
 	esac
 }
