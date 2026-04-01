@@ -375,8 +375,11 @@ Process_Fw_Core() {
 		x86)
 			if [[ $1 =~ efi ]]
 			then
+				Fw_Type=""
+				[[ $1 =~ squashfs ]] && Fw_Type=".squashfs"
+				[[ $1 =~ ext4 ]] && Fw_Type=".ext4"
 				Fw=${AutoBuild_Fw/SHA256/$(Get_sha256 $1)}
-				Fw=${Fw/FORMAT/${Fw_Format}}
+				Fw=${Fw/FORMAT/${Fw_Type}.${Fw_Format}}
 				if [[ -f $1 ]]
 				then
 					ECHO "Move x86 image [$1] to [${Fw}] ..."
