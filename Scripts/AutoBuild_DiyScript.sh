@@ -86,8 +86,8 @@ Firmware_Diy() {
 
 				wget --quiet --no-check-certificate -P /tmp \
 					https://github.com/ameshkov/dnslookup/releases/download/v1.11.2/dnslookup-linux-amd64-v1.11.2.tar.gz
-				tar -xzf /tmp/dnslookup-linux-amd64-v1.11.2.tar.gz -C /tmp/dnslookup
-				Copy /tmp/dnslookup/linux-amd64/dnslookup ${BASE_FILES}/usr/bin dnslookup
+				tar -xzf /tmp/dnslookup-linux-amd64-v1.11.2.tar.gz -C /tmp
+				Copy /tmp/linux-amd64 ${BASE_FILES}/usr/bin dnslookup
 				chmod +x ${BASE_FILES}/usr/bin/dnslookup
 			;;
 			esac
